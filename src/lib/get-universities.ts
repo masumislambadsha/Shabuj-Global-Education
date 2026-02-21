@@ -28,11 +28,9 @@ export type UniversityFilters = {
 };
 
 export async function getFilteredUniversities(
-  filters: UniversityFilters
+  filters: UniversityFilters,
 ): Promise<UniversityRow[]> {
-  let query = supabase
-    .from("universities")
-    .select("*") as any;
+  let query = supabase.from("universities").select("*") as any;
 
   if (filters.country && filters.country !== "all") {
     query = query.eq("country", filters.country);
@@ -50,7 +48,6 @@ export async function getFilteredUniversities(
   }
 
   if (filters.minRanking) {
-   
     query = query.lte("ranking", Number(filters.minRanking));
   }
   if (filters.maxRanking) {
@@ -81,8 +78,8 @@ export async function getFilteredUniversities(
   const { data, error } = await query.order("ranking", { ascending: true });
 
   if (error) {
-    console.error("Error fetching universities", error);
-    return [];
+    console.error("Error fetching universities:", error);
+    throw new Error("Failed to fetch universities. Please try again later.");
   }
 
   return data ?? [];

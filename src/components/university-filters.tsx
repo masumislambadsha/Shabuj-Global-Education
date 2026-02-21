@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UniversityFilters } from "../lib/get-universities";
 
@@ -17,6 +17,7 @@ const COUNTRIES = [
 ];
 
 export default function UniversityFiltersForm({ initialValues }: Props) {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [country, setCountry] = useState(initialValues.country ?? "all");
@@ -45,178 +46,193 @@ export default function UniversityFiltersForm({ initialValues }: Props) {
     setCountry(initialValues.country ?? "all");
   }, [searchParams, initialValues.country]);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const params = new URLSearchParams();
+
+    if (country && country !== "all") params.set("country", country);
+    if (city) params.set("city", city);
+    if (minTuition) params.set("minTuition", minTuition);
+    if (maxTuition) params.set("maxTuition", maxTuition);
+    if (minRanking) params.set("minRanking", minRanking);
+    if (maxRanking) params.set("maxRanking", maxRanking);
+    if (establishedFrom) params.set("establishedFrom", establishedFrom);
+    if (establishedTo) params.set("establishedTo", establishedTo);
+    if (scholarship) params.set("scholarship", "true");
+    if (ieltsRequired && ieltsRequired !== "any")
+      params.set("ieltsRequired", ieltsRequired);
+    if (intakeMonth) params.set("intakeMonth", intakeMonth);
+
+    router.push(`/universities?${params.toString()}`);
+  };
+
   return (
     <form
-      method="GET"
-      className="grid gap-4 md:grid-cols-4 bg-white shadow-xl rounded-2xl p-6 mb-8 border border-gray-100"
+      onSubmit={handleSubmit}
+      className="bg-white border border-stone-200 p-6"
     >
-      {/* Country */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          Country
-        </label>
-        <select
-          name="country"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-        >
-          <option value="all">All</option>
-          {COUNTRIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </div>
+      <h3 className="font-serif text-xl text-stone-800 mb-6 pb-4 border-b border-stone-200">
+        Refine Your Search
+      </h3>
 
-      {/* City */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          City
-        </label>
-        <input
-          name="city"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-          placeholder="e.g. London"
-        />
-      </div>
+      <div className="space-y-6">
+        {/* Country */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            Country
+          </label>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors bg-white"
+          >
+            <option value="all">All</option>
+            {COUNTRIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Tuition */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          Tuition (min / max)
-        </label>
-        <div className="flex gap-2">
+        {/* City */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            City
+          </label>
           <input
-            name="minTuition"
-            value={minTuition}
-            onChange={(e) => setMinTuition(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm w-1/2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-            placeholder="Min"
-          />
-          <input
-            name="maxTuition"
-            value={maxTuition}
-            onChange={(e) => setMaxTuition(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm w-1/2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-            placeholder="Max"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+            placeholder="e.g. London"
           />
         </div>
-      </div>
 
-      {/* Ranking */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          Ranking (best / worst)
-        </label>
-        <div className="flex gap-2">
-          <input
-            name="minRanking"
-            value={minRanking}
-            onChange={(e) => setMinRanking(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm w-1/2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-            placeholder="Best ≤"
-          />
-          <input
-            name="maxRanking"
-            value={maxRanking}
-            onChange={(e) => setMaxRanking(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm w-1/2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-            placeholder="Worst ≥"
-          />
+        {/* Tuition */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            Tuition Range
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              value={minTuition}
+              onChange={(e) => setMinTuition(e.target.value)}
+              className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+              placeholder="Min"
+            />
+            <input
+              value={maxTuition}
+              onChange={(e) => setMaxTuition(e.target.value)}
+              className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+              placeholder="Max"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Established */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          Established year
-        </label>
-        <div className="flex gap-2">
-          <input
-            name="establishedFrom"
-            value={establishedFrom}
-            onChange={(e) => setEstablishedFrom(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm w-1/2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-            placeholder="From"
-          />
-          <input
-            name="establishedTo"
-            value={establishedTo}
-            onChange={(e) => setEstablishedTo(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm w-1/2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-            placeholder="To"
-          />
+        {/* Ranking */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            Ranking Range
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              value={minRanking}
+              onChange={(e) => setMinRanking(e.target.value)}
+              className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+              placeholder="Best"
+            />
+            <input
+              value={maxRanking}
+              onChange={(e) => setMaxRanking(e.target.value)}
+              className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+              placeholder="Worst"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Scholarship */}
-      <div className="flex items-center gap-3 pt-6">
-        <input
-          id="scholarship"
-          type="checkbox"
-          name="scholarship"
-          value="true"
-          checked={scholarship}
-          onChange={(e) => setScholarship(e.target.checked)}
-          className="h-5 w-5 rounded border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-200"
-        />
-        <label
-          htmlFor="scholarship"
-          className="text-sm font-medium text-gray-700 cursor-pointer"
-        >
-          Scholarships available
-        </label>
-      </div>
+        {/* Established */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            Established Year
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              value={establishedFrom}
+              onChange={(e) => setEstablishedFrom(e.target.value)}
+              className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+              placeholder="From"
+            />
+            <input
+              value={establishedTo}
+              onChange={(e) => setEstablishedTo(e.target.value)}
+              className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors"
+              placeholder="To"
+            />
+          </div>
+        </div>
 
-      {/* IELTS */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          IELTS requirement
-        </label>
-        <select
-          name="ieltsRequired"
-          value={ieltsRequired}
-          onChange={(e) => setIeltsRequired(e.target.value)}
-          className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-        >
-          <option value="any">Any</option>
-          <option value="true">IELTS required</option>
-          <option value="false">No IELTS</option>
-        </select>
-      </div>
+        {/* Scholarship */}
+        <div className="flex items-center gap-3">
+          <input
+            id="scholarship"
+            type="checkbox"
+            checked={scholarship}
+            onChange={(e) => setScholarship(e.target.checked)}
+            className="h-4 w-4 border-stone-400 text-stone-800 focus:ring-stone-500"
+          />
+          <label
+            htmlFor="scholarship"
+            className="text-sm text-stone-700 cursor-pointer"
+          >
+            Scholarships Available
+          </label>
+        </div>
 
-      {/* Intake month */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-          Intake month
-        </label>
-        <select
-          name="intakeMonth"
-          value={intakeMonth}
-          onChange={(e) => setIntakeMonth(e.target.value)}
-          className="border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none"
-        >
-          <option value="">Any</option>
-          <option value="January">January</option>
-          <option value="February">February</option>
-          <option value="May">May</option>
-          <option value="July">July</option>
-          <option value="September">September</option>
-        </select>
-      </div>
+        {/* IELTS */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            IELTS Requirement
+          </label>
+          <select
+            value={ieltsRequired}
+            onChange={(e) => setIeltsRequired(e.target.value)}
+            className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors bg-white"
+          >
+            <option value="any">Any</option>
+            <option value="true">Required</option>
+            <option value="false">Not Required</option>
+          </select>
+        </div>
 
-      {/* Submit */}
-      <div className="flex items-end justify-end md:col-span-4">
-        <button
-          type="submit"
-          className="px-8 py-3 text-sm font-semibold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-        >
-          Apply Filters
-        </button>
+        {/* Intake month */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-stone-700 tracking-wider uppercase">
+            Intake Month
+          </label>
+          <select
+            value={intakeMonth}
+            onChange={(e) => setIntakeMonth(e.target.value)}
+            className="border border-stone-300 px-3 py-2.5 text-sm text-stone-700 focus:border-stone-500 focus:outline-none transition-colors bg-white"
+          >
+            <option value="">Any</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="May">May</option>
+            <option value="July">July</option>
+            <option value="September">September</option>
+          </select>
+        </div>
+
+        {/* Submit */}
+        <div className="pt-4 border-t border-stone-200">
+          <button
+            type="submit"
+            className="w-full px-6 py-3 text-sm tracking-wider uppercase font-medium border-2 border-stone-800 text-stone-800 hover:bg-stone-800 hover:text-white transition-all duration-300"
+          >
+            Apply Filters
+          </button>
+        </div>
       </div>
     </form>
   );

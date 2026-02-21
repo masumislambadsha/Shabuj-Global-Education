@@ -1,0 +1,24 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" fill="#292524"/>
+
+  <!-- Open Book -->
+  <!-- Left page -->
+  <path d="M4 8C4 7.44772 4.44772 7 5 7C8.31371 7 11 9.68629 11 13V25C11 25.5523 10.5523 26 10 26C6.68629 26 4 23.3137 4 20V8Z" fill="#F5F5F4"/>
+
+  <!-- Right page -->
+  <path d="M28 8C28 7.44772 27.5523 7 27 7C23.6863 7 21 9.68629 21 13V25C21 25.5523 21.4477 26 22 26C25.3137 26 28 23.3137 28 20V8Z" fill="#F5F5F4"/>
+
+  <!-- Center binding shadow -->
+  <line x1="16" y1="7" x2="16" y2="26" stroke="#1C1917" stroke-width="1" opacity="0.3"/>
+
+  <!-- Page lines (left) -->
+  <line x1="6" y1="12" x2="10" y2="12" stroke="#292524" stroke-width="0.5" opacity="0.3"/>
+  <line x1="6" y1="15" x2="10" y2="15" stroke="#292524" stroke-width="0.5" opacity="0.3"/>
+  <line x1="6" y1="18" x2="10" y2="18" stroke="#292524" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Page lines (right) -->
+  <line x1="22" y1="12" x2="26" y2="12" stroke="#292524" stroke-width="0.5" opacity="0.3"/>
+  <line x1="22" y1="15" x2="26" y2="15" stroke="#292524" stroke-width="0.5" opacity="0.3"/>
+  <line x1="22" y1="18" x2="26" y2="18" stroke="#292524" stroke-width="0.5" opacity="0.3"/>
+</svg>

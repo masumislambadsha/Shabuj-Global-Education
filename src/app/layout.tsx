@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "@/src/components/navbar";
 
 export const metadata: Metadata = {
-  title: "Shabuj Global – Assignment",
-  description: "University Finder module demo built with Next.js and Supabase.",
+  title: "Shabuj Global – University Finder",
+  description:
+    "Discover distinguished institutions of higher learning through our curated selection.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -12,8 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-slate-50 text-gray-900">
+    <html lang="en" className="bg-stone-50">
+      <body className="text-stone-900">
+        <Navbar />
         {children}
       </body>
     </html>
